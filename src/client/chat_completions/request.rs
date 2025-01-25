@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Example
 /// ```
-/// use deepseek::client::chat_completions::request::{RequestBody, Message};
+/// use deepseek_rs::client::chat_completions::request::{RequestBody, Message};
 ///
 /// let request = RequestBody::new_messages(
 ///     vec![Message::new_user_message("Hello".to_string())]
@@ -35,11 +35,11 @@ pub struct RequestBody {
 
 impl RequestBody {
     /// Creates a new RequestBody with specified messages and model
-    /// 
+    ///
     /// # Examples
     /// ```
-    /// use deepseek::client::chat_completions::request::{RequestBody, Message, Model};
-    /// 
+    /// use deepseek_rs::client::chat_completions::request::{RequestBody, Message, Model};
+    ///
     /// let request = RequestBody::new(
     ///     vec![Message::new_user_message("Hello".to_string())],
     ///     Model::DeepseekChat
@@ -54,11 +54,11 @@ impl RequestBody {
     }
 
     /// Creates a new RequestBody with only messages, using default model
-    /// 
+    ///
     /// # Examples
     /// ```
-    /// use deepseek::client::chat_completions::request::{RequestBody, Message};
-    /// 
+    /// use deepseek_rs::client::chat_completions::request::{RequestBody, Message};
+    ///
     /// let request = RequestBody::new_messages(
     ///     vec![Message::new_user_message("Hello".to_string())]
     /// );
@@ -179,14 +179,14 @@ pub enum Model {
 }
 
 /// Frequency penalty value between -2 and 2
-/// 
+///
 /// # Examples
 /// ```
-/// use deepseek::client::chat_completions::request::FrequencyPenalty;
-/// 
+/// use deepseek_rs::client::chat_completions::request::FrequencyPenalty;
+///
 /// let penalty = FrequencyPenalty::new(1);
 /// assert_eq!(penalty.to_string(), "1");
-/// 
+///
 /// // Values are clamped
 /// let max_penalty = FrequencyPenalty::new(3);
 /// assert_eq!(max_penalty.to_string(), "2");
@@ -381,14 +381,14 @@ pub enum Role {
 }
 
 /// A chat message with role and content
-/// 
+///
 /// # Examples
 /// ```
-/// use deepseek::client::chat_completions::request::{Message, Role};
-/// 
+/// use deepseek_rs::client::chat_completions::request::{Message, Role};
+///
 /// let user_msg = Message::new_user_message("Hello".to_string());
 /// assert!(matches!(user_msg.role, Role::User));
-/// 
+///
 /// let system_msg = Message::new_system_message_with_name(
 ///     "Configure the assistant".to_string(),
 ///     "sys".to_string()

@@ -11,7 +11,7 @@ impl DeepSeekClient {
     ///
     /// # Example
     /// ```no_run
-    /// use deepseek::{DeepSeekClient, client::chat_completions::request::{RequestBody, Message}};
+    /// use deepseek_rs::{DeepSeekClient, client::chat_completions::request::{RequestBody, Message}};
     /// # use tokio;
     /// # #[tokio::main]
     /// # async fn main() {
