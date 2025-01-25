@@ -3,9 +3,11 @@ name = "deepseek_rs"
 version = "0.1.1"
 edition = "2021"
 authors = ["Chloe Pratas <chloevision97@gmail.com>"]
-github = "https://github.com/Chloe199719/deepseek_rs"
+repository = "https://github.com/Chloe199719/deepseek_rs"
 license = "MIT"
-description = "A Rust library for the DeepSeek API"
+description = "A Rust client library for the DeepSeek API"
+keywords = ["deepseek", "ai", "api-client"]
+categories = ["api-bindings", "asynchronous"]
 
 [lib]
 path = "src/lib.rs"
@@ -22,11 +24,5 @@ dotenvy = "0.15.7"
 futures = "0.3.30"
 chrono = { version = "0.4.35", features = ["serde", "clock"] }
 tokio = { version = "1.39.3", features = ["full"] }
-nanoid = "0.4.0"
-regex ="1"
 dotenvy_macro = "0.15.7"
-
-
-anyhow = "1.0.94"
-base64 = "0.22.1"
 thiserror = "2.0.11"
