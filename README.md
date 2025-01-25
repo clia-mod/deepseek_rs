@@ -28,8 +28,10 @@ use deepseek::client::Client;
 #[tokio::main]
 async fn main() {
     let client = Client::new("your_api_key");
-
-    let response = client.chat_completion("Hello, world!").await.unwrap();
+    let request = RequestBody::new_messages(
+        vec![Message::new_user_message("Hello".to_string())]
+     );
+    let response = client.chat_completion(request).await.unwrap();
     println!("{}", response);
 }
 ```
