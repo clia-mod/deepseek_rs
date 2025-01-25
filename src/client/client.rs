@@ -33,6 +33,10 @@ impl DeepSeekClient {
     pub fn set_api_key(&mut self, api_key: String) {
         self.api_key = api_key;
     }
+    pub fn with_api_key(mut self, api_key: String) -> Self {
+        self.api_key = api_key;
+        self
+    }
     pub(crate) fn default_headers(&self) -> reqwest::header::HeaderMap {
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
