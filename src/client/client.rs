@@ -80,7 +80,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_default_panic() {
-        std::env::remove_var("DEEPSEEK_API_KEY");
+        std::env::remove_var("DEEP_SEEK_API_KEY");
         let _ = DeepSeekClient::default().unwrap();
     }
 }

@@ -1,8 +1,22 @@
+//! Request types for the chat completions API
+//!
+//! This module contains all the types needed to construct a chat completion request.
+
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 
+/// A chat completion request body
+///
+/// # Example
+/// ```
+/// use deepseek::client::chat_completions::request::{RequestBody, Message};
+///
+/// let request = RequestBody::new_messages(
+///     vec![Message::new_user_message("Hello".to_string())]
+/// );
+/// ```
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct RequestBody {
     messages: Vec<Message>,
     model: Model,
@@ -18,7 +32,19 @@ pub struct RequestBody {
     logprobs: Option<bool>,
     top_logprobs: Option<TopLogProbs>,
 }
+
 impl RequestBody {
+    /// Creates a new RequestBody with specified messages and model
+    /// 
+    /// # Examples
+    /// ```
+    /// use deepseek::client::chat_completions::request::{RequestBody, Message, Model};
+    /// 
+    /// let request = RequestBody::new(
+    ///     vec![Message::new_user_message("Hello".to_string())],
+    ///     Model::DeepseekChat
+    /// );
+    /// ```
     pub fn new(messages: Vec<Message>, model: Model) -> Self {
         RequestBody {
             messages,
@@ -26,65 +52,103 @@ impl RequestBody {
             ..Default::default()
         }
     }
+
+    /// Creates a new RequestBody with only messages, using default model
+    /// 
+    /// # Examples
+    /// ```
+    /// use deepseek::client::chat_completions::request::{RequestBody, Message};
+    /// 
+    /// let request = RequestBody::new_messages(
+    ///     vec![Message::new_user_message("Hello".to_string())]
+    /// );
+    /// ```
     pub fn new_messages(messages: Vec<Message>) -> Self {
         RequestBody {
             messages,
             ..Default::default()
         }
     }
+
+    /// Sets the messages for this request
     pub fn with_messages(mut self, messages: Vec<Message>) -> Self {
         self.messages = messages;
         self
     }
+
+    /// Sets the model for this request
     pub fn with_model(mut self, model: Model) -> Self {
         self.model = model;
         self
     }
+
+    /// Sets the frequency penalty (-2.0 to 2.0)
     pub fn with_frequency_penalty(mut self, penalty: FrequencyPenalty) -> Self {
         self.frequency_penalty = Some(penalty);
         self
     }
+
+    /// Sets maximum tokens in the response (1 to 8192)
     pub fn with_max_tokens(mut self, tokens: MaxTokens) -> Self {
         self.max_tokens = Some(tokens);
         self
     }
+
+    /// Sets presence penalty (-2.0 to 2.0)
     pub fn with_presence_penalty(mut self, penalty: PresencePenalty) -> Self {
         self.presence_penalty = Some(penalty);
         self
     }
+
+    /// Sets response format (JSON or Text)
     pub fn with_response_format(mut self, format: ResponseFormat) -> Self {
         self.response_format = Some(format);
         self
     }
+
+    /// Sets stop sequence(s)
     pub fn with_stop(mut self, stop: StopType) -> Self {
         self.stop = Some(stop);
         self
     }
+
+    /// Enables/disables streaming
     pub fn with_stream(mut self, stream: bool) -> Self {
         self.stream = Some(stream);
         self
     }
+
+    /// Sets streaming options
     pub fn with_stream_options(mut self, options: StreamOptions) -> Self {
         self.stream_options = Some(options);
         self
     }
+
+    /// Sets temperature (0.0 to 2.0)
     pub fn with_temperature(mut self, temp: Temperature) -> Self {
         self.temperature = Some(temp);
         self
     }
+
+    /// Sets top_p (0.0 to 1.0)
     pub fn with_top_p(mut self, top_p: TopP) -> Self {
         self.top_p = Some(top_p);
         self
     }
+
+    /// Enables/disables logprobs
     pub fn with_logprobs(mut self, logprobs: bool) -> Self {
         self.logprobs = Some(logprobs);
         self
     }
+
+    /// Sets number of top logprobs to return (0 to 20)
     pub fn with_top_logprobs(mut self, top_logprobs: TopLogProbs) -> Self {
         self.top_logprobs = Some(top_logprobs);
         self
     }
 }
+
 impl Default for RequestBody {
     fn default() -> Self {
         RequestBody {
@@ -105,8 +169,8 @@ impl Default for RequestBody {
     }
 }
 
+/// Available models for chat completions
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-
 pub enum Model {
     #[serde(rename = "deepseek-chat")]
     DeepseekChat,
@@ -114,8 +178,20 @@ pub enum Model {
     DeepSeekReasoner,
 }
 
+/// Frequency penalty value between -2 and 2
+/// 
+/// # Examples
+/// ```
+/// use deepseek::client::chat_completions::request::FrequencyPenalty;
+/// 
+/// let penalty = FrequencyPenalty::new(1);
+/// assert_eq!(penalty.to_string(), "1");
+/// 
+/// // Values are clamped
+/// let max_penalty = FrequencyPenalty::new(3);
+/// assert_eq!(max_penalty.to_string(), "2");
+/// ```
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-
 pub struct FrequencyPenalty(i8);
 
 impl FrequencyPenalty {
@@ -303,6 +379,23 @@ pub enum Role {
     #[serde(rename = "assistant")]
     Assistant,
 }
+
+/// A chat message with role and content
+/// 
+/// # Examples
+/// ```
+/// use deepseek::client::chat_completions::request::{Message, Role};
+/// 
+/// let user_msg = Message::new_user_message("Hello".to_string());
+/// assert!(matches!(user_msg.role, Role::User));
+/// 
+/// let system_msg = Message::new_system_message_with_name(
+///     "Configure the assistant".to_string(),
+///     "sys".to_string()
+/// );
+/// assert!(matches!(system_msg.role, Role::System));
+/// assert_eq!(system_msg.name, Some("sys".to_string()));
+/// ```
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Message {
     pub role: Role,
@@ -310,6 +403,7 @@ pub struct Message {
     pub name: Option<String>,
 }
 impl Message {
+    /// Creates a new message with specified role, content and optional name
     pub fn new(role: Role, content: String, name: Option<String>) -> Self {
         Message {
             role,
@@ -317,6 +411,8 @@ impl Message {
             name,
         }
     }
+
+    /// Creates a new user message
     pub fn new_user_message(content: String) -> Self {
         Message {
             role: Role::User,
@@ -324,6 +420,8 @@ impl Message {
             name: None,
         }
     }
+
+    /// Creates a new system message
     pub fn new_system_message(content: String) -> Self {
         Message {
             role: Role::System,
@@ -331,6 +429,8 @@ impl Message {
             name: None,
         }
     }
+
+    /// Creates a new assistant message
     pub fn new_assistant_message(content: String) -> Self {
         Message {
             role: Role::Assistant,
@@ -338,6 +438,8 @@ impl Message {
             name: None,
         }
     }
+
+    /// Creates a new user message with a name
     pub fn new_user_message_with_name(content: String, name: String) -> Self {
         Message {
             role: Role::User,
@@ -345,6 +447,8 @@ impl Message {
             name: Some(name),
         }
     }
+
+    /// Creates a new system message with a name
     pub fn new_system_message_with_name(content: String, name: String) -> Self {
         Message {
             role: Role::System,
@@ -352,6 +456,8 @@ impl Message {
             name: Some(name),
         }
     }
+
+    /// Creates a new assistant message with a name
     pub fn new_assistant_message_with_name(content: String, name: String) -> Self {
         Message {
             role: Role::Assistant,
