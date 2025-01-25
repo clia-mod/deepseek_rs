@@ -4,10 +4,11 @@ A Rust client library for the DeepSeek API.
 
 ## Features
 
-- Chat completions API support
-- Builder pattern for request configuration
-- Type-safe API parameters
-- Async/await support
+- Fully async Rust implementation with `tokio`
+- Type-safe chat completions API
+- Ergonomic builder pattern for requests
+- Comprehensive error handling using Rust's `Result` type
+- First-class `serde` serialization support
 
 ## Installation
 
