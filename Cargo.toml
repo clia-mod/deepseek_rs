@@ -1,6 +1,6 @@
 [package]
 name = "deepseek_rs"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Chloe Pratas <chloevision97@gmail.com>"]
 repository = "https://github.com/Chloe199719/deepseek_rs"
