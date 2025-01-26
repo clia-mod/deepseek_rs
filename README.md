@@ -37,6 +37,50 @@ async fn main() {
 }
 ```
 
+## Examples
+
+### Basic Usage
+
+```rust
+use deepseek_rs::{DeepSeekClient, client::chat_completions::request::{Message, RequestBody}};
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = DeepSeekClient::default()?;
+    let request = RequestBody::new_messages(vec![
+        Message::new_user_message("Hello".to_string())
+    ]);
+    let response = client.chat_completions(request).await?;
+    println!("{}", response.choices[0].message.content.unwrap());
+    Ok(())
+}
+```
+
+### Using the Reasoning Model
+
+```rust
+use deepseek_rs::{
+    DeepSeekClient,
+    client::chat_completions::request::{Message, Model, RequestBody}
+};
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = DeepSeekClient::default()?;
+    let request = RequestBody::new_messages(vec![
+        Message::new_user_message("What is 15 * 7?".to_string())
+    ])
+    .with_model(Model::DeepSeekReasoner);
+
+    let response = client.chat_completions(request).await?;
+    println!("Reasoning: {}", response.choices[0].message.reasoning_content.unwrap());
+    println!("Answer: {}", response.choices[0].message.content.unwrap());
+    Ok(())
+}
+```
+
+For more examples, check out the [examples directory](examples/).
+
 ## Documentation
 
 For more detailed information, please refer to the [API documentation](https://docs.deepseek.com).
