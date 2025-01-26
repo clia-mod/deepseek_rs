@@ -82,7 +82,18 @@ mod tests {
         assert!(!response.choices.is_empty());
         assert!(!response.id.is_empty());
     }
-
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_reasoning() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+        let request =
+            RequestBody::new_messages(vec![Message::new_user_message("Hello".to_string())])
+                .with_model(Model::DeepSeekReasoner);
+        let response = client.chat_completions(request).await.unwrap();
+        assert!(!response.choices.is_empty());
+        assert!(!response.id.is_empty());
+    }
     #[tokio::test]
     #[ignore]
     async fn test_chat_completions_with_system_message() {
