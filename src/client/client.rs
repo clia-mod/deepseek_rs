@@ -80,6 +80,7 @@ mod tests {
         let client = DeepSeekClient::default().unwrap();
         assert_eq!(client.api_key, "api_key");
         assert_eq!(client.url, URL);
+        std::env::remove_var("DEEP_SEEK_API_KEY");
     }
     #[test]
     #[should_panic]
