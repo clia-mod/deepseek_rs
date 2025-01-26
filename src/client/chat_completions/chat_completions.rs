@@ -68,9 +68,9 @@ impl DeepSeekClient {
 
 #[cfg(test)]
 mod tests {
-    use crate::client::chat_completions::request::Message;
-
     use super::*;
+    use crate::client::chat_completions::request::{Message, Model, Temperature};
+
     #[tokio::test]
     #[ignore]
     async fn test_chat_completions() {
@@ -78,8 +78,54 @@ mod tests {
         let client = DeepSeekClient::default().unwrap();
         let request =
             RequestBody::new_messages(vec![Message::new_user_message("Hello".to_string())]);
-        client.chat_completions(request).await.unwrap();
+        let response = client.chat_completions(request).await.unwrap();
+        assert!(!response.choices.is_empty());
+        assert!(!response.id.is_empty());
     }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_with_system_message() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+        let request = RequestBody::new_messages(vec![
+            Message::new_system_message("You are a helpful assistant.".to_string()),
+            Message::new_user_message("What is 2+2?".to_string()),
+        ]);
+        let response = client.chat_completions(request).await.unwrap();
+        assert!(!response.choices.is_empty());
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_with_reasoner_model() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+        let request = RequestBody::new_messages(vec![Message::new_user_message(
+            "Solve this math problem: 15 * 7".to_string(),
+        )])
+        .with_model(Model::DeepSeekReasoner);
+
+        let response = client.chat_completions(request).await.unwrap();
+        assert!(!response.choices.is_empty());
+        // Reasoner model should include reasoning_content
+        assert!(response.choices[0].message.reasoning_content.is_some());
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_with_temperature() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+        let request = RequestBody::new_messages(vec![Message::new_user_message(
+            "Tell me a creative story.".to_string(),
+        )])
+        .with_temperature(Temperature::new(0.9));
+
+        let response = client.chat_completions(request).await.unwrap();
+        assert!(!response.choices.is_empty());
+    }
+
     #[tokio::test]
     #[ignore]
     async fn test_chat_completions_wrong_api_key() {
@@ -87,10 +133,46 @@ mod tests {
         let request =
             RequestBody::new_messages(vec![Message::new_user_message("Hello".to_string())]);
         let res = client.chat_completions(request).await;
-        assert!(res.is_err());
-        if let Err(RequestErrors::Unauthorized(_)) = res {
-        } else {
-            panic!("Expected Unauthorized error")
-        }
+        assert!(matches!(res, Err(RequestErrors::Unauthorized(_))));
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_empty_messages() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+        let request = RequestBody::new_messages(vec![]);
+        let res = client.chat_completions(request).await;
+        assert!(matches!(res, Err(RequestErrors::BadRequest(_))));
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_conversation() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+
+        // First message
+        let request = RequestBody::new_messages(vec![Message::new_user_message(
+            "What is the capital of France?".to_string(),
+        )]);
+        let response1 = client.chat_completions(request).await.unwrap();
+
+        // Follow-up message using assistant's response
+        let request = RequestBody::new_messages(vec![
+            Message::new_user_message("What is the capital of France?".to_string()),
+            Message::new_assistant_message(
+                response1.choices[0]
+                    .message
+                    .content
+                    .clone()
+                    .unwrap_or_default(),
+            ),
+            Message::new_user_message("What is its population?".to_string()),
+        ]);
+        let response2 = client.chat_completions(request).await.unwrap();
+
+        assert!(!response1.choices.is_empty());
+        assert!(!response2.choices.is_empty());
     }
 }
