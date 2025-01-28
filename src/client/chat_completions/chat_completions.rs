@@ -69,7 +69,10 @@ impl DeepSeekClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::client::chat_completions::request::{Message, Model, Temperature};
+    use crate::{
+        client::chat_completions::request::{Message, Model, Temperature},
+        request::ResponseFormat,
+    };
 
     #[tokio::test]
     #[ignore]
@@ -106,7 +109,22 @@ mod tests {
         let response = client.chat_completions(request).await.unwrap();
         assert!(!response.choices.is_empty());
     }
-
+    #[tokio::test]
+    #[ignore]
+    async fn test_chat_completions_with_system_message_json() {
+        dotenvy::dotenv().ok();
+        let client = DeepSeekClient::default().unwrap();
+        let request = RequestBody::new_messages(vec![
+            Message::new_system_message("You are a helpful assistant.".to_string()),
+            Message::new_user_message("What is 2+2?".to_string()),
+            Message::new_user_message(r#"```json { "output" : <value>} "#.to_string()),
+        ])
+        .with_response_format(ResponseFormat::new(
+            crate::request::ResponseFormatType::Json,
+        ));
+        let response = client.chat_completions(request).await.unwrap();
+        assert!(!response.choices.is_empty());
+    }
     #[tokio::test]
     #[ignore]
     async fn test_chat_completions_with_reasoner_model() {

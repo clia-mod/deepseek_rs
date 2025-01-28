@@ -273,18 +273,21 @@ impl fmt::Display for PresencePenalty {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 
 pub struct ResponseFormat {
-    pub response_format: ResponseFormatType,
+    #[serde(rename = "type")]
+    pub type_: ResponseFormatType,
 }
 impl Default for ResponseFormat {
     fn default() -> Self {
         ResponseFormat {
-            response_format: ResponseFormatType::Json,
+            type_: ResponseFormatType::Json,
         }
     }
 }
 impl ResponseFormat {
     pub fn new(response_format: ResponseFormatType) -> Self {
-        ResponseFormat { response_format }
+        ResponseFormat {
+            type_: response_format,
+        }
     }
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -501,15 +504,15 @@ mod tests {
         let text_format = ResponseFormat::new(ResponseFormatType::Text);
         let default_format = ResponseFormat::default();
 
-        match default_format.response_format {
+        match default_format.type_ {
             ResponseFormatType::Json => assert!(true),
             _ => assert!(false, "Default should be Json"),
         }
-        match json_format.response_format {
+        match json_format.type_ {
             ResponseFormatType::Json => assert!(true),
             _ => assert!(false, "Expected Json"),
         }
-        match text_format.response_format {
+        match text_format.type_ {
             ResponseFormatType::Text => assert!(true),
             _ => assert!(false, "Expected Text"),
         }
