@@ -1,4 +1,4 @@
-use deepseek_rs::{
+use clia_deepseek_rs::{
     client::chat_completions::request::{Message, Model, RequestBody, Temperature},
     DeepSeekClient,
 };

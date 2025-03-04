@@ -1,18 +1,18 @@
 [package]
-name = "deepseek_rs"
+name = "clia_deepseek_rs"
 version = "0.1.4"
 edition = "2021"
 authors = ["Chloe Pratas <chloevision97@gmail.com>"]
-repository = "https://github.com/Chloe199719/deepseek_rs"
+repository = "https://github.com/clia-mod/deepseek_rs"
 license = "MIT"
-description = "A Rust client library for the DeepSeek API"
+description = "A Rust client library for the DeepSeek API (use rustls)"
 keywords = ["deepseek", "ai", "api-client"]
 categories = ["api-bindings", "asynchronous"]
 
 [lib]
 path = "src/lib.rs"
 [dependencies]
-reqwest = { version = "0.12.9", features = [
+reqwest = { version = "0.12.9", default-features = false, features = [
     "json",
     "cookies",
     "rustls-tls",
